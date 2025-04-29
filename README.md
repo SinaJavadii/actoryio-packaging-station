@@ -1,5 +1,3 @@
-# actoryio-packaging-station
-A Factory IO project for automated sorting and packaging.
 # Automated Packaging and Sorting Line with Quality Control – Factory IO Project
 
 This project simulates an automated packaging and sorting factory line using **Factory IO**. It features the classification and segregation of plastic and metal doors, along with detection and handling of defective products (Bad Boxes).
@@ -12,76 +10,75 @@ The factory produces two types of products:
 1. **Plastic doors (Blue Lid)**
 2. **Metal doors (Metal Lid)**
 
-Bad products (**Bad Boxes**, represented as cardboard boxes) are detected and removed at the beginning of the conveyor line to improve efficiency.
+Additionally, defective products (**Bad Boxes**, represented as cardboard boxes) are identified and separated early in the production line to improve operational efficiency.
 
 ---
 
 ## 🔧 System Functionality
 
-The factory consists of a **main conveyor line** equipped with two types of pushers and sensors:
+The factory layout includes a **main conveyor line** supported by pushers and multiple sensors:
 
 ### 1. **Bad Box Removal**
-- **Sensor:** Retroreflective sensor mounted at a fixed height.
+- **Sensor:** Retroreflective sensor positioned at a specific height.
+- **Behavior:**
+  - Normal condition: Sensor output = 1
+  - When a Bad Box passes: Sensor output = 0 (inverted using a NOT gate).
 - **Logic:**
-  - Normal state: Signal = 1
-  - Detection (Box passes): Signal = 0 → Inverted → Stored in an `SR Latch`
-- **Delay Handling:** Uses a `TON` (Timer ON Delay) to delay the activation of the pusher until the box reaches it.
-- **Pushback Control:** Another `TON` returns the pusher to its original position after pushing.
+  - An `SR Latch` stores the detection signal.
+  - A `TON` (Timer ON Delay) delays the pusher activation to match the box's travel time from sensor to pusher.
+  - A second `TON` returns the pusher to its original position after pushing the box onto a curved side conveyor.
 
 ### 2. **Metal Lid Sorting**
-- **Sensor:** Vision sensor that sends a signal if a metal object is detected.
-- **Logic:**
-  - Normal state: Signal = 0
-  - Metal detected: Signal = 1 → Triggers the sorting logic.
-- The same pusher logic (with timing adjustments) as Bad Box removal is used.
+- **Sensor:** Vision sensor capable of detecting metallic objects.
+- **Behavior:**
+  - Normal condition: Sensor output = 0
+  - Detection of metal: Sensor output = 1
+- **Logic:** Similar to Bad Box handling but with adjusted timing based on the speed of the conveyor.
 
-### 3. **Blue Lid Handling**
-- Remaining objects (after removal of Bad Boxes and Metal Lids) are assumed to be plastic doors (Blue Lid).
-- These are sent to the end of the main conveyor.
-
-### Conveyor System
-- Uses **Curved Belt Conveyors** to direct pushed items to side lines.
+### 3. **Plastic Doors (Blue Lid) Handling**
+- After defective and metallic products are separated, the remaining products (Blue Lids) continue on the main conveyor to the end.
 
 ---
 
 ## 🔢 Control Logic (PLC)
 
-- **CTU Counters**: Count the number of detections for each product type.
-- **INT Outputs**: Show counts via CONTROL I/O.
-- **Reset Switches**: Connected to each CTU to allow reset functionality.
+- **CTU Counters**: Used to count the number of each detected product type.
+- **INT Outputs**: Display counts via CONTROL I/O.
+- **Reset Functionality**: Toggle switches are provided to reset each counter.
 
 ### Additional Vision Sensor
-A secondary Vision sensor at the end of the conveyor counts Blue Lids for more accurate results.
+A secondary Vision sensor at the end of the conveyor counts the Blue Lids to ensure accurate tracking.
 
 ---
 
 ## ▶️ Startup Procedure
 
-- A **toggle switch** (0/1) is provided next to the conveyor.
-- Turning it on starts the factory operation.
+- A **toggle switch** (two-position switch: 0/1) is installed next to the main conveyor.
+- Turning it on (position 1) starts the factory operations.
 
 ---
 
 ## 📁 Project Structure
 
-- `.factoryio` file: The complete simulation model.
-- `.pdf` or `.docx`: Full project documentation.
-- `README.md`: This file.
+- `CA`: Factory IO simulation file containing the complete 3D environment and logic.
+- `Diagram1`: Block diagram illustrating the system's structure and data flow.
+- `Documentation`: PDF file containing detailed project reports, explanations, and technical notes.
+- `README.md`: This file explaining the project setup, logic, and structure.
 
 ---
 
-## 💡 Notes
+## 💡 Important Notes
 
-- Timing of pushers must be adjusted based on conveyor speed.
-- Sensor positioning is critical for accurate detection.
-- Realistic logic design improves performance and simulation reliability.
+- Pushers' activation timing must be fine-tuned based on conveyor speed and object size.
+- Proper placement of sensors is critical for reliable and accurate detection.
+- The use of timers (`TON`) and `SR Latch` ensures synchronization between detection and physical actuation.
 
 ---
 
 ## 🔗 License
 
-This project is intended for educational purposes. Feel free to fork, use, or improve it with credit.
+This project is for educational purposes. Feel free to use, modify, or improve it with appropriate credit.
 
 ---
 
-If you need help with automation, control logic, or simulation, feel free to open an issue or reach out!
+If you encounter any issues or have suggestions for improvements, feel free to open an issue or pull request!
